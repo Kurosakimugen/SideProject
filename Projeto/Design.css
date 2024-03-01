@@ -1,0 +1,13 @@
+body {
+    margin-left: 200px;
+    margin-right: 200px;
+    text-align: justify;
+    background-image: url(Principal/Background.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: rgb(222, 238, 252);
+}
+.Titulo {
+    text-align: center;
+}
