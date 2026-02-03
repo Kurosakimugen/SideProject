@@ -1,7 +1,7 @@
-<?php ob_start(); ?>
+<h1>Warframe Hub</h1>
 
-<h1>Warframe Weapon Builder</h1>
-
-<?php
-$content = ob_get_clean();
-require __DIR__ . '/layout/main.php';
+<ul>
+    <li><a href="/lore">Lore</a></li>
+    <li><a href="/builder">Weapon Builder</a></li>
+    <li><a href="/builds">Warframe Builds</a></li>
+</ul>

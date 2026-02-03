@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Warframe Builder</title>
-    <link rel="stylesheet" href="/css/app.css">
+    <meta charset="UTF-8">
+    <title><?= $title ?? 'Warframe Site' ?></title>
 </head>
 <body>
     <?= $content ?>
