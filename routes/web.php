@@ -5,6 +5,11 @@
 $router->get('/', 'HomeController@index');
 
 // Rotas de Placeholder referente a mudar para a página respectiva
-$router->get('/lore', 'PlaceholderController@index');
 $router->get('/builder', 'PlaceholderController@index');
 $router->get('/builds', 'PlaceholderController@index');
+
+// Rotas de Lore
+$router->get('/lore', 'LoreController@index');
+$router->get('/lore/timeline', 'LoreController@Timeline_index');
+$router->get('/lore/quests', 'LoreController@Quests_index');
+$router->get('/lore/quests/{saga}/{quest}', 'LoreController@quest');

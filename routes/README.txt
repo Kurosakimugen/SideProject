@@ -1,0 +1,1 @@
+Já tem a base para rotas relativas a Lore, dando foco nas quests (Ainda por completar)
