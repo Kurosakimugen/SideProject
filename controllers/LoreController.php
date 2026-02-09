@@ -19,7 +19,12 @@ class LoreController extends Controller
     // path/quests
     public function Quests_index()
     {
-        $this->view('lore/quests/index',['title' => 'Quests Lore']);
+        $sagas = require __DIR__ . '/../data/quests.php';
+
+        $this->view('lore/quests/index', [
+            'title' => 'Quests Lore',
+            'sagas' => $sagas
+        ]);
     }
 
     // /lore/quests/{saga}/{quest}

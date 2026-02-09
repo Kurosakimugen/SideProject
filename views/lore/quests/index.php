@@ -1,21 +1,17 @@
 <h1>Quests</h1>
 
-<h2>Initial Saga</h2>
-<ul>
-    <li>
-        <a href="/lore/quests/initialSaga/Awakening">
-            Awakening
-        </a>
-    </li>
-</ul>
+<?php foreach ($sagas as $sagaSlug => $saga): ?>
+    <section>
+        <h2><?= htmlspecialchars($saga['name']) ?></h2>
 
-<h2>Orokin Era</h2>
-<ul>
-    <li>
-        <a href="/lore/quests/orokinEra/SecondDream">
-            The Second Dream
-        </a>
-    </li>
-</ul>
-
-<a href="/lore">Back to Lore</a>
+        <ul>
+            <?php foreach ($saga['quests'] as $questSlug => $quest): ?>
+                <li>
+                    <a href="/lore/quests/<?= $sagaSlug ?>/<?= $questSlug ?>">
+                        <?= htmlspecialchars($quest['name']) ?>
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </section>
+<?php endforeach; ?>
