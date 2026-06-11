@@ -39,11 +39,16 @@ namespace WFHub.Data
             DamageProfile: new DamageProfile(
                 new List<DamageEntry>
                 {
-                    new(Slash, 24 * 0.34),
-                    new(Impact, 24 * 0.33),
-                    new(Puncture, 24 * 0.33)
+                    new(Slash, 0.34),
+                    new(Impact, 0.33),
+                    new(Puncture, 0.33)
                 }
             )
         );
+
+        public static List<Weapon> All = new()
+        {
+            Braton
+        };
     }
 }

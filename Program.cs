@@ -1,10 +1,13 @@
 using WFHub.Components;
+using WFHub.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped<CalculadoraService>();
 
 var app = builder.Build();
 

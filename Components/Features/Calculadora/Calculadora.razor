@@ -1,5 +1,99 @@
-﻿<h3>Calculadora</h3>
+﻿@page "/calculadora"
+
+@inject CalculadoraService CalcService
+@rendermode InteractiveServer
+
+<h3>Calculadora</h3>
+
+
+<select @bind="selectedWeaponName">
+    @foreach (var weapon in weapons)
+    {
+        <option value="@weapon.Name">
+            @weapon.Name
+        </option>
+    }
+</select>
+
+<label>
+    <input type="checkbox" @bind="settings.Headshot" />
+    Headshot
+</label>
+
+<label>
+    <input type="checkbox" @bind="settings.Stealth" />
+    Stealth
+</label>
+
+<input type="number" @bind="settings.Distance" />
+
+<h4>Crit</h4>
+<select @bind="settings.CritMode">
+    @foreach (var mode in Enum.GetValues<EvaluationMode>())
+    {
+        <option value="@mode">@mode</option>
+    }
+</select>
+
+<h4>Status</h4>
+<select @bind="settings.StatusMode">
+    @foreach (var mode in Enum.GetValues<EvaluationMode>())
+    {
+        <option value="@mode">@mode</option>
+    }
+</select>
+
+<h4>Multishot</h4>
+<select @bind="settings.MultiMode">
+    @foreach (var mode in Enum.GetValues<EvaluationMode>())
+    {
+        <option value="@mode">@mode</option>
+    }
+</select>
+
+<button @onclick="Calcular">
+    Calcular
+</button>
+
+
+<p>
+    Damage Per Click: @result
+</p>
+
+
+@if (debugQuantized != null)
+{
+    <h4>Quantized Damage</h4>
+
+    <ul>
+        @foreach (var dmg in debugQuantized)
+        {
+            <li>
+                @dmg.Key.Damage : @dmg.Value
+            </li>
+        }
+    </ul>
+}
+
 
 @code {
 
+    private List<Weapon> weapons = Weapons.All;
+    private double result;
+    private Dictionary<DamageType, double> debugQuantized = new();
+    private CalculadoraSettings settings = new();
+
+    private string selectedWeaponName;
+    private Weapon? SelectedWeapon => weapons.FirstOrDefault(x => x.Name == selectedWeaponName);
+
+    protected override void OnInitialized()
+    {
+        selectedWeaponName = weapons.First().Name;
+    }
+
+    private void Calcular()
+    {
+        debugQuantized = CalcService.Quantized_Damage(SelectedWeapon);
+        result = CalcService.Damage_Per_Click(SelectedWeapon, settings);
+    }
 }
