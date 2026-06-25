@@ -7,8 +7,8 @@ namespace WFHub.Data
     {
         public static Weapon Braton = new(
             Name: "Braton",
-            WeaponClass: "Rifle",
-            WeaponType: "Primary",
+            WeaponType: "Rifle",
+            WeaponSlot: "Primary",
 
             Stats: new WeaponStats(
                 Economy: new WeaponEconomy(

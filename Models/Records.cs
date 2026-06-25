@@ -41,8 +41,8 @@
         );
     public record Weapon(
         string Name,
-        string WeaponClass,
         string WeaponType,
+        string WeaponSlot,
         WeaponStats Stats,
         DamageProfile DamageProfile
     );
