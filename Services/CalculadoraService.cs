@@ -48,7 +48,7 @@ namespace WFHub.Services
 
             if (Condicoes.MultiMode == EvaluationMode.Maximum)
             {
-                Console.WriteLine("Melhor caso possível");
+                Console.WriteLine("Melhor caso possível de multishot");
                 return baseProjectile + (overflowProjectile > 0 ? 1 : 0 );
             }
 
@@ -77,7 +77,7 @@ namespace WFHub.Services
 
             if (Condicoes.CritMode == EvaluationMode.Maximum)
             {
-                Console.WriteLine("Melhor caso possível");
+                Console.WriteLine("Melhor caso possível de crit");
                 finaltier = tier + (overflow > 0 ? 1 : 0);
 
             }
@@ -93,6 +93,43 @@ namespace WFHub.Services
         }
 
         // Cálculo de status
+        public int Status_Amount (Weapon Arma, CalculadoraSettings Condicoes)
+        {
+            int resultado;
+
+            if (Condicoes.StatusMode == EvaluationMode.Disabled)
+            {
+                Console.WriteLine("O Status está desativado");
+                return 0;
+            }
+
+            // Verificação de % de status
+            double statusChanceCheck = Math.Max(0, Arma.Stats.Combat.StatusChance);
+            int amount_effects_secured = (int)Math.Floor(statusChanceCheck);
+            // Separação da percentagem garantida para apenas ter a parte que pode variar com o RNG
+            double overflow = statusChanceCheck - amount_effects_secured;
+
+            if (Condicoes.StatusMode == EvaluationMode.Maximum)
+            {
+                // Formula quando não existe probabilidades
+                Console.WriteLine("Melhor caso possível de status");
+                resultado = amount_effects_secured + (overflow > 0 ? 1 : 0);
+            }
+            else
+            {
+                // Formula usando o RNG
+                bool extra_Status = Random.Shared.NextDouble() < overflow;
+                resultado = amount_effects_secured + (extra_Status ? 1 : 0);
+            }
+            return resultado;
+        }
+
+        public List<Effect,int> Status_Applied (Weapon Arma, int Amount_Status)
+        {
+            List<Effect,int> resultado = new List<Effect,int>();
+
+            // Obter a lista de todos os tipos de danos aplicados pela arma para poder se calcular qual status aplicar
+        }
 
         // Extras
 
