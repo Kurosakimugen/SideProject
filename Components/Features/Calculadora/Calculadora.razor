@@ -15,6 +15,7 @@
     }
 </select>
 
+@*
 <label>
     <input type="checkbox" @bind="settings.Headshot" />
     Headshot
@@ -26,6 +27,7 @@
 </label>
 
 <input type="number" @bind="settings.Distance" />
+*@
 
 <h4>Crit</h4>
 <select @bind="settings.CritMode">
@@ -56,31 +58,45 @@
 </button>
 
 
-<p>
-    Damage Per Click: @result
-</p>
-
-
-@if (debugQuantized != null)
+@if (result != null)
 {
-    <h4>Quantized Damage</h4>
+    <p>
+        Damage Per Click: @result.TotalDamage
+    </p>
 
-    <ul>
-        @foreach (var dmg in debugQuantized)
+    int projectile = 1;
+
+    @foreach (var shot in result.Projectiles)
+    {
+        <h4>Projectile @projectile</h4>
+
+        <p>Damage: @shot.Damage</p>
+        <p>Crit Multiplier: @shot.CritMultiplier</p>
+
+        @if (shot.StatusApplied.Count > 0)
         {
-            <li>
-                @dmg.Key.Damage : @dmg.Value
-            </li>
-        }
-    </ul>
-}
+            <p>Status:</p>
 
+            <ul>
+                @foreach (var status in shot.StatusApplied)
+                {
+                    <li>@status.Key.Damage: @status.Value</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No status applied.</p>
+        }
+
+        projectile++;
+    }
+}
 
 @code {
 
     private List<Weapon> weapons = Weapons.All;
-    private double result;
-    private Dictionary<DamageType, double> debugQuantized = new();
+    private DamageResult? result;
     private CalculadoraSettings settings = new();
 
     private string selectedWeaponName;
@@ -93,7 +109,6 @@
 
     private void Calcular()
     {
-        debugQuantized = CalcService.Quantized_Damage(SelectedWeapon);
         result = CalcService.Damage_Per_Click(SelectedWeapon, settings);
     }
 }

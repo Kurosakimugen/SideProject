@@ -6,6 +6,13 @@
         Maximum,
         Simulation
     }
+
+    public enum WeaponSource
+    {
+        Test,
+        Real
+    }
+
     public class CalculadoraSettings
     {
         public bool Headshot { get; set; } = false;

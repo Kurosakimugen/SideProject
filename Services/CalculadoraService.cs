@@ -32,6 +32,8 @@ namespace WFHub.Services
 
         // Cálculo do dano base das armas com mods
 
+        // Cálculo do dano das armas com base em habilidade de Warframe
+
         // Cálculo de multishot
         public int Projectiles_Per_Shot(Weapon Arma ,CalculadoraSettings Condicoes)
         {
@@ -124,37 +126,100 @@ namespace WFHub.Services
             return resultado;
         }
 
-        public List<Effect,int> Status_Applied (Weapon Arma, int Amount_Status)
+        public Dictionary<DamageType,int> Status_Applied (Weapon Arma, int Amount_Status)
         {
-            List<Effect,int> resultado = new List<Effect,int>();
+            if (Amount_Status <= 0)
+            {
+                return new Dictionary<DamageType, int>();
+            }
 
-            // Obter a lista de todos os tipos de danos aplicados pela arma para poder se calcular qual status aplicar
+            if (Arma.DamageProfile.Damages.Count == 1)
+            {
+                var tipo = Arma.DamageProfile.Damages[0].Type;
+
+                return new Dictionary<DamageType, int>
+                {
+                    { tipo, Amount_Status }
+                };
+            }
+
+            Dictionary<DamageType, int> resultado = new Dictionary<DamageType, int>();
+            
+
+            for (int i = 0; i < Amount_Status; i++)
+            {
+                double stack_random = 0;
+                double number_RNG = Random.Shared.NextDouble();
+
+                // iterar sobre todos os tipos de danos na arma e suas proporções de dano
+                // Por enquanto assumir que os valores desta lista estão entre 0 e 1
+                foreach (DamageEntry dmg in Arma.DamageProfile.Damages)
+                {
+                    // Obter o tipo de dano a ser avaliado
+                    DamageType Tipo = dmg.Type;
+                    double proportion = dmg.Value;
+                    stack_random += proportion;
+                    if (number_RNG < stack_random)
+                    {
+                        resultado.TryAdd(Tipo, 0);
+                        resultado[Tipo]++;
+                        break;
+                    }
+
+                }
+            }
+            
+
+            return resultado;
         }
 
         // Extras
 
         // Cálculo de final de damage
 
-        public double Damage_Per_Click(Weapon Arma, CalculadoraSettings Condicoes)
+        public DamageResult Damage_Per_Click(Weapon Arma, CalculadoraSettings Condicoes)
         {
             // Passo de verificação
             // Quantização
             Dictionary<DamageType, double> Quantized = Quantized_Damage(Arma);
             // Incialiazar o valor final
+            DamageResult result = new();                        // Criar uma instância com o registo de todos os projeteis e o dano total
             double total = 0;
             // Calcular o numero de projeteis
             int Projectiles = Projectiles_Per_Shot(Arma, Condicoes);
-            // Por cada projectil calcular o seu crit e respetivo damage
+            // Por cada projectil calcular o seu crit e respetivo damage, a quantidade de status aplicada e quantos
             for (int i = 0; i < Projectiles; i++)
             {
+                ProjectileResult projectile = new();            // Criar uma instância para guardar as informações sobre o projetil
+                double projectileDamage = 0;
+
                 double crit = Crit_Effect(Arma, Condicoes);
+                // Guardar o valor do crit no registo
+                projectile.CritMultiplier = crit;
+
                 foreach (var dmg in Quantized)
                 {
-                    total += dmg.Value * crit;
+                    projectileDamage += dmg.Value * crit;
                 }
+
+                // Guardar o valor do dano total do projetil no registo
+                projectile.Damage = projectileDamage;
+
+                //Adicionar o valor total do projetil ao total
+                total += projectileDamage;
+
+                int status = Status_Amount(Arma, Condicoes);
+                Dictionary<DamageType, int> applied = Status_Applied(Arma, status);
+                // Guardar o status aplicados pelo projetil no registo
+                projectile.StatusApplied = applied;
+
+                // Guardar o registo do projetil no conjunto completo
+                result.Projectiles.Add(projectile);
             }
 
-            return total;
+            // Guardar o valor final do dano no conjunto completo
+            result.TotalDamage = total;
+            return result;
         }
     }
 }
