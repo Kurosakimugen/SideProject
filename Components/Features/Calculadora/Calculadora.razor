@@ -5,6 +5,7 @@
 
 <h3>Calculadora</h3>
 
+<h4>Weapon</h4>
 
 <select @bind="selectedWeaponName">
     @foreach (var weapon in weapons)
@@ -15,12 +16,30 @@
     }
 </select>
 
-@*
-<label>
-    <input type="checkbox" @bind="settings.Headshot" />
-    Headshot
-</label>
+<h4>Enemy</h4>
 
+<select value="@selectedEnemyName" @onchange="EnemyChanged">
+    @foreach (var enemy in enemies)
+    {
+        <option value="@enemy.Name">@enemy.Name</option>
+    }
+</select>
+
+@if (selectedEnemy != null)
+{
+    <h4>Body Part</h4>
+
+    <select @bind="selectedBodyPartName">
+        @foreach (var part in selectedEnemy.PartMultiplier)
+        {
+            <option value="@part.Name">
+                @part.Name (@part.Multiplier x)
+            </option>
+        }
+    </select>
+}
+
+@*
 <label>
     <input type="checkbox" @bind="settings.Stealth" />
     Stealth
@@ -96,19 +115,42 @@
 @code {
 
     private List<Weapon> weapons = Weapons.All;
+    private List<Enemy> enemies = Enemys.All;
     private DamageResult? result;
     private CalculadoraSettings settings = new();
 
+    private string selectedEnemyName;
+    private string selectedBodyPartName;
     private string selectedWeaponName;
     private Weapon? SelectedWeapon => weapons.FirstOrDefault(x => x.Name == selectedWeaponName);
+    private Enemy selectedEnemy => enemies.First(e => e.Name == selectedEnemyName);
+    
+    private void EnemyChanged(ChangeEventArgs e)
+    {
+        selectedEnemyName = e.Value?.ToString() ?? "";
+
+        selectedBodyPartName =
+            selectedEnemy.PartMultiplier.First().Name ?? "";
+    }
 
     protected override void OnInitialized()
     {
         selectedWeaponName = weapons.First().Name;
+
+        selectedEnemyName = enemies.First().Name;
+
+        selectedBodyPartName =
+            enemies.First().PartMultiplier.First().Name;
     }
 
     private void Calcular()
     {
+        settings.Enemy = selectedEnemy;
+
+        settings.SelectedBodyPart =
+            selectedEnemy.PartMultiplier
+                .First(p => p.Name == selectedBodyPartName);
+
         result = CalcService.Damage_Per_Click(SelectedWeapon, settings);
     }
 }

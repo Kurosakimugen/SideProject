@@ -175,6 +175,32 @@ namespace WFHub.Services
 
         // Extras
 
+        // Cálculo de BodyPart Multiplier
+
+        public double BodyPart_Multiplier (CalculadoraSettings Condicoes /* Rever onde vão estar guardados os mods*/)
+        {
+            if (Condicoes.SelectedBodyPart == null)
+                return 1;
+
+            double multiplier = Condicoes.SelectedBodyPart.Multiplier;
+
+            if (Condicoes.SelectedBodyPart.Part == BodyPart.Weakpoint)
+            {
+                //multiplier *= (1 + Mods);
+            }
+
+            return multiplier;
+        }
+
+        // Cálculo do Bonus de Stealth (Apenas funciona quando é uma melee)
+
+        public double StealthBonus (CalculadoraSettings Condicoes)
+        {
+            int WeaponRank = Condicoes.WeaponRank;
+            double Bonus = 1 + (0.2 * WeaponRank);
+            return Bonus;
+        }
+
         // Cálculo de final de damage
 
         public DamageResult Damage_Per_Click(Weapon Arma, CalculadoraSettings Condicoes)
@@ -185,6 +211,7 @@ namespace WFHub.Services
             // Incialiazar o valor final
             DamageResult result = new();                        // Criar uma instância com o registo de todos os projeteis e o dano total
             double total = 0;
+            double PartMultiplier = BodyPart_Multiplier(Condicoes);
             // Calcular o numero de projeteis
             int Projectiles = Projectiles_Per_Shot(Arma, Condicoes);
             // Por cada projectil calcular o seu crit e respetivo damage, a quantidade de status aplicada e quantos
@@ -199,14 +226,14 @@ namespace WFHub.Services
 
                 foreach (var dmg in Quantized)
                 {
-                    projectileDamage += dmg.Value * crit;
+                    projectileDamage += dmg.Value * crit * PartMultiplier;
                 }
-
-                // Guardar o valor do dano total do projetil no registo
-                projectile.Damage = projectileDamage;
 
                 //Adicionar o valor total do projetil ao total
                 total += projectileDamage;
+
+                // Guardar o valor do dano total do projetil no registo
+                projectile.Damage = projectileDamage;
 
                 int status = Status_Amount(Arma, Condicoes);
                 Dictionary<DamageType, int> applied = Status_Applied(Arma, status);
