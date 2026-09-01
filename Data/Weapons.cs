@@ -3,6 +3,23 @@ using static WFHub.Data.DamageTypes;
 
 namespace WFHub.Data
 {
+
+    public enum WeaponStatsTarget
+    {
+        BaseDamage,
+        CritChance,
+        CritMultiplier,
+        FireRate,
+        Multishot,
+        StatusChance,
+        MagazineSize,
+        AmmoMax,
+        AmmoCost,
+        ReloadTime,
+        MinDistance,
+        MaxDistance
+    }
+
     public class Weapons
     {
         public static Weapon Braton = new(

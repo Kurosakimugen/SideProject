@@ -1,11 +1,12 @@
 ﻿namespace WFHub.Models
 {
-    public record DamageType(string Damage);
-
-    public record Faction(string FactionName);
 
     public record Mod(string ModName);
 
+    // Calculator
+    public record DamageType(string Damage);
+
+    public record Faction(string FactionName);
     public record DamageMultiplierRule(DamageType DamageType, Faction Faction, double Multiplier);
 
     public record Effect (string EffectName, string Description);
@@ -23,6 +24,7 @@
 
     public record DamageProfile(IReadOnlyList<DamageEntry> Damages);
 
+    // Weapon
     public record WeaponEconomy(
         int MagazineSize,
         int AmmoMax,
@@ -60,6 +62,7 @@
         DamageProfile DamageProfile
     );
 
+    // Enemy
     public record Enemy(string Name, Faction Faction, int Armor, int Health, int Shields, bool Damage_Attenuation, List<BodyPartMultiplier> PartMultiplier );
 
     public record BodyPartMultiplier(string Name, double Multiplier, BodyPart Part);
